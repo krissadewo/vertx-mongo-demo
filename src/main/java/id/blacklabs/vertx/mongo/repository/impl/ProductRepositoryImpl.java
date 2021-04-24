@@ -1,7 +1,8 @@
-package id.blacklabs.vertx.mongo.repository;
+package id.blacklabs.vertx.mongo.repository.impl;
 
 import id.blacklabs.vertx.mongo.common.StatusCode;
 import id.blacklabs.vertx.mongo.document.Product;
+import id.blacklabs.vertx.mongo.repository.ProductRepository;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -44,7 +45,6 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void close() {
-        System.out.println("DISPOSED");
     }
 
 }

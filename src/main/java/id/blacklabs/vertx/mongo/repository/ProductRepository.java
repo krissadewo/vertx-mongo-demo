@@ -1,6 +1,7 @@
 package id.blacklabs.vertx.mongo.repository;
 
 import id.blacklabs.vertx.mongo.document.Product;
+import id.blacklabs.vertx.mongo.repository.impl.ProductRepositoryImpl;
 import io.vertx.codegen.annotations.ProxyClose;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.codegen.annotations.VertxGen;

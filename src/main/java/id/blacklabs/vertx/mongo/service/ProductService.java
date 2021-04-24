@@ -3,7 +3,7 @@ package id.blacklabs.vertx.mongo.service;
 import id.blacklabs.vertx.mongo.common.Address;
 import id.blacklabs.vertx.mongo.document.Product;
 import id.blacklabs.vertx.mongo.repository.ProductRepository;
-import id.blacklabs.vertx.mongo.repository.ProductRepositoryImpl;
+import id.blacklabs.vertx.mongo.repository.impl.ProductRepositoryImpl;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;

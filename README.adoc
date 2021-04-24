@@ -2,7 +2,8 @@
 
 image:https://img.shields.io/badge/vert.x-4.0.3-purple.svg[link="https://vertx.io"]
 
-This application was generated using http://start.vertx.io
+- Mongo client for crud operation
+- Vertx service proxy pattern
 
 == Building
 
