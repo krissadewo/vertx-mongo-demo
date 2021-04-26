@@ -18,7 +18,10 @@ public class MongoConfig {
         return MongoConfigHelper.INSTANCE;
     }
 
-    public MongoClient mongoClient(Vertx vertx) {
+    private MongoConfig() {
+    }
+
+    public MongoClient mongoClient(final Vertx vertx) {
         JsonObject mongoConfig = new JsonObject();
         mongoConfig.put("connection_string", "mongodb://localhost:27017");
         mongoConfig.put("db_name", "vertx_demo");

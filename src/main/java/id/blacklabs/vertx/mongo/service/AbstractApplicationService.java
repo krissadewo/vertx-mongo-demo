@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractApplicationService {
 
-    private final Logger logger = LoggerFactory.getLogger(AbstractApplicationService.class);
+    private final static Logger logger = LoggerFactory.getLogger(AbstractApplicationService.class);
 
     private final MessageConsumer<JsonObject> serviceRegister;
 

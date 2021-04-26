@@ -17,7 +17,7 @@ public class ProductApi {
 
     private final ProductService productService;
 
-    private final Logger logger = LoggerFactory.getLogger(ProductApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(ProductApi.class);
 
     @Builder
     public ProductApi(Router router, ProductService productService) {
