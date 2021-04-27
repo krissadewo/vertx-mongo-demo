@@ -1,5 +1,7 @@
 package id.blacklabs.vertx.mongo.document;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import id.blacklabs.vertx.mongo.document.converter.ProductConverter;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 import lombok.NoArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.NoArgsConstructor;
  * @date 4/24/21 10:45 AM
  */
 @DataObject(generateConverter = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 public class Product {
 
@@ -17,6 +20,8 @@ public class Product {
     private String name;
 
     private String sku;
+
+    private String type;
 
     private int qty;
 
@@ -68,5 +73,13 @@ public class Product {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

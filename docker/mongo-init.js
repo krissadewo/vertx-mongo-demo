@@ -7,3 +7,4 @@ db.createUser(
   },
 );
 db.createCollection('product');
+db.createCollection('sales');

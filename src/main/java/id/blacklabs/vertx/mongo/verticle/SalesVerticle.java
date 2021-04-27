@@ -1,36 +1,36 @@
 package id.blacklabs.vertx.mongo.verticle;
 
-import id.blacklabs.vertx.mongo.api.ProductApi;
-import id.blacklabs.vertx.mongo.service.ProductService;
+import id.blacklabs.vertx.mongo.api.SalesApi;
+import id.blacklabs.vertx.mongo.service.SalesService;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 
 /**
  * @author krissadewo
- * @date 4/24/21 11:07 AM
+ * @date 4/26/21 2:36 PM
  */
-public class ProductVerticle extends ApplicationVerticle<ProductService> {
+public class SalesVerticle extends ApplicationVerticle<SalesService> {
 
     private final MongoClient mongoClient;
 
     private final Router router;
 
-    public ProductVerticle(MongoClient mongoClient, Router router) {
+    public SalesVerticle(MongoClient mongoClient, Router router) {
         this.mongoClient = mongoClient;
         this.router = router;
     }
 
     @Override
-    void buildApi(ProductService service) {
-        ProductApi.builder()
+    void buildApi(SalesService service) {
+        SalesApi.builder()
             .service(service)
             .router(router)
             .build();
     }
 
     @Override
-    ProductService buildService() {
-        return ProductService.builder()
+    SalesService buildService() {
+        return SalesService.builder()
             .vertx(vertx)
             .mongoClient(mongoClient)
             .build();

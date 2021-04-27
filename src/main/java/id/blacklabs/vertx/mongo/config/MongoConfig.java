@@ -27,7 +27,8 @@ public class MongoConfig {
         mongoConfig.put("db_name", "vertx_demo");
         mongoConfig.put("username", "vertx");
         mongoConfig.put("password", "vertx");
+        mongoConfig.put("useObjectId", true);
 
-        return MongoClient.createShared(vertx, mongoConfig);
+        return MongoClient.create(vertx, mongoConfig);
     }
 }

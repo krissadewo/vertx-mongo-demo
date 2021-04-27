@@ -2,8 +2,11 @@ package id.blacklabs.vertx.mongo;
 
 import id.blacklabs.vertx.mongo.config.MongoConfig;
 import id.blacklabs.vertx.mongo.verticle.ProductVerticle;
+import id.blacklabs.vertx.mongo.verticle.SalesVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.jackson.DatabindCodec;
 import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import org.slf4j.Logger;
@@ -33,6 +36,16 @@ public class MainVerticle extends AbstractVerticle {
                     vertx.deployVerticle(new ProductVerticle(mongoClient, router), event -> {
                         if (event.succeeded()) {
                             deployedVerticles.add(event.result());
+                        } else {
+                            logger.error("failed to deploy product verticle : {}", event.cause().getMessage());
+                        }
+                    });
+
+                    vertx.deployVerticle(new SalesVerticle(mongoClient, router), event -> {
+                        if (event.succeeded()) {
+                            deployedVerticles.add(event.result());
+                        } else {
+                            logger.error("failed to deploy sales verticle : {}", event.cause().getMessage());
                         }
                     });
 

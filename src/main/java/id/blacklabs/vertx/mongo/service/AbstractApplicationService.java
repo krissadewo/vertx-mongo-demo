@@ -1,5 +1,6 @@
 package id.blacklabs.vertx.mongo.service;
 
+import id.blacklabs.vertx.mongo.common.RepositoryContext;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonObject;
@@ -17,8 +18,11 @@ public abstract class AbstractApplicationService {
 
     private final MessageConsumer<JsonObject> serviceRegister;
 
+    protected RepositoryContext repositoryContext;
+
     public AbstractApplicationService(Vertx vertx, MongoClient mongoClient) {
         serviceRegister = registerService(vertx, mongoClient);
+        repositoryContext = new RepositoryContext(vertx);
     }
 
     abstract MessageConsumer<JsonObject> registerService(Vertx vertx, MongoClient mongoClient);

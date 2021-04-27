@@ -6,5 +6,6 @@ package id.blacklabs.vertx.mongo.common;
  */
 public interface Address {
 
-    String ADDRESS_PRODUCT_REPOSITORY = "product.service";
+    String ADDRESS_PRODUCT_REPO = "product.service";
+    String ADDRESS_SALES_REPO = "sales.service";
 }

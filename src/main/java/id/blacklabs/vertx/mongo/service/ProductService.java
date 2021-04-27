@@ -19,23 +19,21 @@ import lombok.Builder;
  */
 public class ProductService extends AbstractApplicationService {
 
-    private final ProductRepository productRepository;
-
     @Builder
     public ProductService(Vertx vertx, MongoClient mongoClient) {
         super(vertx, mongoClient);
 
-        productRepository = ProductRepository.createProxy(vertx, Address.ADDRESS_PRODUCT_REPOSITORY);
+        repositoryContext.putIfAbsent(ProductRepository.class, () -> ProductRepository.createProxy(vertx, Address.ADDRESS_PRODUCT_REPO));
     }
 
     public void save(Product product, Handler<AsyncResult<String>> resultHandler) {
-        productRepository.save(product, resultHandler);
+        repositoryContext.get(ProductRepository.class).save(product, resultHandler);
     }
 
     @Override
     MessageConsumer<JsonObject> registerService(Vertx vertx, MongoClient mongoClient) {
         return new ServiceBinder(vertx)
-            .setAddress(Address.ADDRESS_PRODUCT_REPOSITORY)
+            .setAddress(Address.ADDRESS_PRODUCT_REPO)
             .register(ProductRepository.class, new ProductRepositoryImpl(mongoClient));
     }
 

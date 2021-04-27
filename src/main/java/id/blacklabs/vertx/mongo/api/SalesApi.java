@@ -1,7 +1,7 @@
 package id.blacklabs.vertx.mongo.api;
 
-import id.blacklabs.vertx.mongo.document.Product;
-import id.blacklabs.vertx.mongo.service.ProductService;
+import id.blacklabs.vertx.mongo.document.Sales;
+import id.blacklabs.vertx.mongo.service.SalesService;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -11,25 +11,25 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author krissadewo
- * @date 4/24/21 3:09 PM
+ * @date 4/26/21 2:36 PM
  */
-public class ProductApi {
+public class SalesApi {
 
-    private final ProductService service;
+    private final SalesService service;
 
-    private static final Logger logger = LoggerFactory.getLogger(ProductApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(SalesApi.class);
 
     @Builder
-    public ProductApi(Router router, ProductService service) {
+    public SalesApi(Router router, SalesService service) {
         this.service = service;
 
         router.clear();
         router.route().handler(BodyHandler.create());
-        router.post("/products").handler(this::save);
+        router.post("/sales").handler(this::save);
     }
 
     private void save(RoutingContext context) {
-        service.save(new Product(context.getBodyAsJson()), event -> {
+        service.save(new Sales(context.getBodyAsJson()), event -> {
             logger.info(event.result());
 
             if (event.succeeded()) {
