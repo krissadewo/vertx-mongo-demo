@@ -1,4 +1,4 @@
-package id.blacklabs.vertx.mongo.common;
+package id.blacklabs.vertx.mongo.context;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.shareddata.LocalMap;

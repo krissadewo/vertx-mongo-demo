@@ -1,6 +1,5 @@
 package id.blacklabs.vertx.mongo.service;
 
-import id.blacklabs.vertx.mongo.common.Address;
 import id.blacklabs.vertx.mongo.document.Product;
 import id.blacklabs.vertx.mongo.document.Sales;
 import id.blacklabs.vertx.mongo.repository.ProductRepository;
@@ -11,8 +10,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
-import io.vertx.serviceproxy.ServiceBinder;
 import lombok.Builder;
 
 /**
@@ -22,15 +19,15 @@ import lombok.Builder;
 public class SalesService extends AbstractApplicationService {
 
     @Builder
-    public SalesService(Vertx vertx, MongoClient mongoClient) {
-        super(vertx, mongoClient);
+    public SalesService(Vertx vertx) {
+        super(vertx);
 
-        repositoryContext.putIfAbsent(SalesRepository.class, () -> SalesRepository.createProxy(vertx, Address.ADDRESS_SALES_REPO));
+        repositoryContext.putIfAbsent(SalesRepository.class, () -> new SalesRepositoryImpl(vertx));
     }
 
     public void save(Sales sales, Handler<AsyncResult<String>> resultHandler) {
         repositoryContext.get(ProductRepository.class)
-            .findById(sales.getProduct().getId(), event -> {
+            .findById(sales.getProduct().getId().toHexString(), event -> {
                 Product product = event.result();
 
                 if (product != null) {
@@ -42,10 +39,8 @@ public class SalesService extends AbstractApplicationService {
     }
 
     @Override
-    MessageConsumer<JsonObject> registerService(Vertx vertx, MongoClient mongoClient) {
-        return new ServiceBinder(vertx)
-            .setAddress(Address.ADDRESS_SALES_REPO)
-            .register(SalesRepository.class, new SalesRepositoryImpl(mongoClient));
+    MessageConsumer<JsonObject> registerService(Vertx vertx) {
+        return null;
     }
 
 }

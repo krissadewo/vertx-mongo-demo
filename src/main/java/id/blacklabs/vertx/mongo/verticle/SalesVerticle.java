@@ -2,7 +2,6 @@ package id.blacklabs.vertx.mongo.verticle;
 
 import id.blacklabs.vertx.mongo.api.SalesApi;
 import id.blacklabs.vertx.mongo.service.SalesService;
-import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 
 /**
@@ -11,12 +10,9 @@ import io.vertx.ext.web.Router;
  */
 public class SalesVerticle extends ApplicationVerticle<SalesService> {
 
-    private final MongoClient mongoClient;
-
     private final Router router;
 
-    public SalesVerticle(MongoClient mongoClient, Router router) {
-        this.mongoClient = mongoClient;
+    public SalesVerticle(Router router) {
         this.router = router;
     }
 
@@ -32,7 +28,6 @@ public class SalesVerticle extends ApplicationVerticle<SalesService> {
     SalesService buildService() {
         return SalesService.builder()
             .vertx(vertx)
-            .mongoClient(mongoClient)
             .build();
     }
 }

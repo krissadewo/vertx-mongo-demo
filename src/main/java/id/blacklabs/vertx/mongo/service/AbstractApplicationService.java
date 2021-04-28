@@ -1,10 +1,10 @@
 package id.blacklabs.vertx.mongo.service;
 
-import id.blacklabs.vertx.mongo.common.RepositoryContext;
+import id.blacklabs.vertx.mongo.context.ConfigContext;
+import id.blacklabs.vertx.mongo.context.RepositoryContext;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,12 +20,15 @@ public abstract class AbstractApplicationService {
 
     protected RepositoryContext repositoryContext;
 
-    public AbstractApplicationService(Vertx vertx, MongoClient mongoClient) {
-        serviceRegister = registerService(vertx, mongoClient);
+    protected ConfigContext configContext;
+
+    public AbstractApplicationService(Vertx vertx) {
+        serviceRegister = registerService(vertx);
         repositoryContext = new RepositoryContext(vertx);
+        configContext = new ConfigContext(vertx);
     }
 
-    abstract MessageConsumer<JsonObject> registerService(Vertx vertx, MongoClient mongoClient);
+    abstract MessageConsumer<JsonObject> registerService(Vertx vertx);
 
     public void unregisterService() {
         serviceRegister.unregister(event -> {

@@ -1,16 +1,22 @@
 package id.blacklabs.vertx.mongo.repository.impl;
 
-import id.blacklabs.vertx.mongo.common.CollectionName;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.InsertOneResult;
+import id.blacklabs.vertx.mongo.common.MongoSubscriber;
 import id.blacklabs.vertx.mongo.common.StatusCode;
+import id.blacklabs.vertx.mongo.config.MongoConfig;
+import id.blacklabs.vertx.mongo.context.ConfigContext;
 import id.blacklabs.vertx.mongo.document.Product;
 import id.blacklabs.vertx.mongo.repository.ProductRepository;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
+import io.vertx.core.Vertx;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * @author krissadewo
@@ -20,24 +26,30 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     private final Logger logger = LoggerFactory.getLogger(ProductRepositoryImpl.class);
 
-    private final MongoClient mongoClient;
+    private final MongoConfig mongoConfig;
 
-    public ProductRepositoryImpl(MongoClient mongoClient) {
-        this.mongoClient = mongoClient;
+    public ProductRepositoryImpl(Vertx vertx) {
+        this.mongoConfig = new ConfigContext(vertx).get(MongoConfig.class);
     }
 
     @Override
     public void save(Product product, Handler<AsyncResult<String>> resultHandler) {
-        mongoClient.insert("product", product.toJson())
-            .onSuccess(event -> {
-                logger.info("saving product success");
+        mongoConfig.getProductCollection()
+            .insertOne(product)
+            .subscribe(new MongoSubscriber<>() {
+                @Override
+                public void onSuccess(InsertOneResult result) {
+                    logger.info("saving product success");
 
-                resultHandler.handle(Future.succeededFuture(StatusCode.SAVE_SUCCESS));
-            })
-            .onFailure(event -> {
-                logger.error("saving product failed : {}", event.getCause().getMessage());
+                    resultHandler.handle(Future.succeededFuture(StatusCode.SAVE_SUCCESS));
+                }
 
-                resultHandler.handle(Future.failedFuture(StatusCode.SAVE_FAILED));
+                @Override
+                public void onFailure(Throwable throwable) {
+                    logger.error("saving product failed : {}", throwable.getCause().getMessage());
+
+                    resultHandler.handle(Future.failedFuture(StatusCode.SAVE_FAILED));
+                }
             });
     }
 
@@ -51,18 +63,47 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void findById(String id, Handler<AsyncResult<Product>> resultHandler) {
-        JsonObject param = new JsonObject();
-        param.put("_id", id);
+        mongoConfig.getProductCollection()
+            .find(Filters.eq("_id", new ObjectId(id)))
+            .subscribe(new MongoSubscriber<>() {
 
-        mongoClient.findOne(CollectionName.PRODUCT, param, null)
-            .onSuccess(event -> {
-                resultHandler.handle(Future.succeededFuture(new Product(event)));
+                @Override
+                public void onSuccess(Product result) {
+                    resultHandler.handle(Future.succeededFuture(result));
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    logger.error("finding product failed : {}", throwable.getCause().getMessage());
+
+                    resultHandler.handle(Future.failedFuture(throwable));
+                }
             });
     }
 
     @Override
-    public void find(Product param, int limit, int offset, Handler<AsyncResult<Product>> asyncResultHandler) {
+    public void find(Product param, int limit, int offset, Handler<AsyncResult<List<Product>>> resultHandler) {
+        mongoConfig.getProductCollection()
+            .find()
+            .subscribe(new MongoSubscriber<>() {
+                @Override
+                public void onSuccess(Product result) {
+                }
 
+                @Override
+                public void onFailure(Throwable throwable) {
+                    logger.error("finding product failed : {}", throwable.getCause().getMessage());
+
+                    resultHandler.handle(Future.failedFuture(throwable));
+                }
+
+                @Override
+                public void onComplete() {
+                    super.onComplete();
+
+                    resultHandler.handle(Future.succeededFuture(getReceived()));
+                }
+            });
     }
 
 }

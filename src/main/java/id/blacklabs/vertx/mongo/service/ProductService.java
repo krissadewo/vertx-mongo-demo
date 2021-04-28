@@ -1,6 +1,5 @@
 package id.blacklabs.vertx.mongo.service;
 
-import id.blacklabs.vertx.mongo.common.Address;
 import id.blacklabs.vertx.mongo.document.Product;
 import id.blacklabs.vertx.mongo.repository.ProductRepository;
 import id.blacklabs.vertx.mongo.repository.impl.ProductRepositoryImpl;
@@ -9,9 +8,9 @@ import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.mongo.MongoClient;
-import io.vertx.serviceproxy.ServiceBinder;
 import lombok.Builder;
+
+import java.util.List;
 
 /**
  * @author krissadewo
@@ -20,21 +19,23 @@ import lombok.Builder;
 public class ProductService extends AbstractApplicationService {
 
     @Builder
-    public ProductService(Vertx vertx, MongoClient mongoClient) {
-        super(vertx, mongoClient);
+    public ProductService(Vertx vertx) {
+        super(vertx);
 
-        repositoryContext.putIfAbsent(ProductRepository.class, () -> ProductRepository.createProxy(vertx, Address.ADDRESS_PRODUCT_REPO));
+        repositoryContext.putIfAbsent(ProductRepository.class, () -> new ProductRepositoryImpl(vertx));
     }
 
     public void save(Product product, Handler<AsyncResult<String>> resultHandler) {
         repositoryContext.get(ProductRepository.class).save(product, resultHandler);
     }
 
+    public void find(Product product, Handler<AsyncResult<List<Product>>> resultHandler) {
+        repositoryContext.get(ProductRepository.class).find(product, 0, 10, resultHandler);
+    }
+
     @Override
-    MessageConsumer<JsonObject> registerService(Vertx vertx, MongoClient mongoClient) {
-        return new ServiceBinder(vertx)
-            .setAddress(Address.ADDRESS_PRODUCT_REPO)
-            .register(ProductRepository.class, new ProductRepositoryImpl(mongoClient));
+    MessageConsumer<JsonObject> registerService(Vertx vertx) {
+        return null;
     }
 
 }

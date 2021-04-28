@@ -1,21 +1,20 @@
 package id.blacklabs.vertx.mongo.document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import id.blacklabs.vertx.mongo.document.converter.ProductConverter;
-import io.vertx.codegen.annotations.DataObject;
-import io.vertx.core.json.JsonObject;
 import lombok.NoArgsConstructor;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.types.ObjectId;
 
 /**
  * @author krissadewo
  * @date 4/24/21 10:45 AM
  */
-@DataObject(generateConverter = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 public class Product {
 
-    private String id;
+    @BsonId
+    private ObjectId id;
 
     private String name;
 
@@ -27,19 +26,11 @@ public class Product {
 
     private String color;
 
-    public Product(JsonObject json) {
-        ProductConverter.fromJson(json, this);
-    }
-
-    public JsonObject toJson() {
-        return JsonObject.mapFrom(this);
-    }
-
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

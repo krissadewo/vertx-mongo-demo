@@ -1,13 +1,11 @@
 package id.blacklabs.vertx.mongo;
 
+import com.mongodb.reactivestreams.client.MongoClient;
 import id.blacklabs.vertx.mongo.config.MongoConfig;
 import id.blacklabs.vertx.mongo.verticle.ProductVerticle;
 import id.blacklabs.vertx.mongo.verticle.SalesVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.json.Json;
-import io.vertx.core.json.jackson.DatabindCodec;
-import io.vertx.ext.mongo.MongoClient;
 import io.vertx.ext.web.Router;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +29,9 @@ public class MainVerticle extends AbstractVerticle {
                 if (http.succeeded()) {
                     startPromise.complete();
 
-                    MongoClient mongoClient = MongoConfig.getInstance().mongoClient(vertx);
+                    MongoConfig.builder().vertx(vertx).build();
 
-                    vertx.deployVerticle(new ProductVerticle(mongoClient, router), event -> {
+                    vertx.deployVerticle(new ProductVerticle(router), event -> {
                         if (event.succeeded()) {
                             deployedVerticles.add(event.result());
                         } else {
@@ -41,7 +39,7 @@ public class MainVerticle extends AbstractVerticle {
                         }
                     });
 
-                    vertx.deployVerticle(new SalesVerticle(mongoClient, router), event -> {
+                    vertx.deployVerticle(new SalesVerticle(router), event -> {
                         if (event.succeeded()) {
                             deployedVerticles.add(event.result());
                         } else {
