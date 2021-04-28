@@ -8,5 +8,7 @@ public interface StatusCode {
 
     String SAVE_SUCCESS = "0010";
     String SAVE_FAILED = "0011";
+    String UPDATE_SUCCESS = "0020";
+    String UPDATE_FAILED = "0021";
 
 }

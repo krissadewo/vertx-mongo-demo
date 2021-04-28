@@ -1,6 +1,5 @@
 package id.blacklabs.vertx.mongo.verticle;
 
-import com.mongodb.reactivestreams.client.MongoClient;
 import id.blacklabs.vertx.mongo.api.ProductApi;
 import id.blacklabs.vertx.mongo.service.ProductService;
 import io.vertx.ext.web.Router;

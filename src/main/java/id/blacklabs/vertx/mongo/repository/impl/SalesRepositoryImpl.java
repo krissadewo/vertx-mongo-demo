@@ -64,6 +64,11 @@ public class SalesRepositoryImpl implements SalesRepository {
     }
 
     @Override
-    public void find(Sales param, int limit, int offset, Handler<AsyncResult<List<Sales>>> asyncResultHandler) {
+    public void find(Sales param, int limit, int offset, Handler<AsyncResult<List<Sales>>> resultHandler) {
+    }
+
+    @Override
+    public void count(Sales param, Handler<AsyncResult<Long>> asyncResultHandler) {
+
     }
 }

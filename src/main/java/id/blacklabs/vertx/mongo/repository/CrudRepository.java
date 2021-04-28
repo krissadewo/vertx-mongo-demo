@@ -22,4 +22,6 @@ public interface CrudRepository<T> extends Shareable {
 
     void find(T param, int limit, int offset, Handler<AsyncResult<List<T>>> resultHandler);
 
+    void count(T param, Handler<AsyncResult<Long>> resultHandler);
+
 }

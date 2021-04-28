@@ -8,8 +8,6 @@ import id.blacklabs.vertx.mongo.repository.impl.SalesRepositoryImpl;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.eventbus.MessageConsumer;
-import io.vertx.core.json.JsonObject;
 import lombok.Builder;
 
 /**
@@ -21,8 +19,6 @@ public class SalesService extends AbstractApplicationService {
     @Builder
     public SalesService(Vertx vertx) {
         super(vertx);
-
-        repositoryContext.putIfAbsent(SalesRepository.class, () -> new SalesRepositoryImpl(vertx));
     }
 
     public void save(Sales sales, Handler<AsyncResult<String>> resultHandler) {
@@ -39,8 +35,8 @@ public class SalesService extends AbstractApplicationService {
     }
 
     @Override
-    MessageConsumer<JsonObject> registerService(Vertx vertx) {
-        return null;
+    void registerRepository(Vertx vertx) {
+        repositoryContext.putIfAbsent(SalesRepository.class, () -> new SalesRepositoryImpl(vertx));
     }
 
 }

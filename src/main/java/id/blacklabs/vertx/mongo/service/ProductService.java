@@ -6,8 +6,6 @@ import id.blacklabs.vertx.mongo.repository.impl.ProductRepositoryImpl;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.eventbus.MessageConsumer;
-import io.vertx.core.json.JsonObject;
 import lombok.Builder;
 
 import java.util.List;
@@ -21,21 +19,27 @@ public class ProductService extends AbstractApplicationService {
     @Builder
     public ProductService(Vertx vertx) {
         super(vertx);
-
-        repositoryContext.putIfAbsent(ProductRepository.class, () -> new ProductRepositoryImpl(vertx));
     }
 
     public void save(Product product, Handler<AsyncResult<String>> resultHandler) {
         repositoryContext.get(ProductRepository.class).save(product, resultHandler);
     }
 
+    public void update(Product product, Handler<AsyncResult<String>> resultHandler) {
+        repositoryContext.get(ProductRepository.class).update(product, resultHandler);
+    }
+
     public void find(Product product, Handler<AsyncResult<List<Product>>> resultHandler) {
         repositoryContext.get(ProductRepository.class).find(product, 0, 10, resultHandler);
     }
 
+    public void count(Product product, Handler<AsyncResult<Long>> resultHandler) {
+        repositoryContext.get(ProductRepository.class).count(product, resultHandler);
+    }
+
     @Override
-    MessageConsumer<JsonObject> registerService(Vertx vertx) {
-        return null;
+    void registerRepository(Vertx vertx) {
+        repositoryContext.putIfAbsent(ProductRepository.class, () -> new ProductRepositoryImpl(vertx));
     }
 
 }

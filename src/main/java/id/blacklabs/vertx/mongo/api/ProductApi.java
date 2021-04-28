@@ -1,21 +1,17 @@
 package id.blacklabs.vertx.mongo.api;
 
-import id.blacklabs.vertx.mongo.document.Product;
+import id.blacklabs.vertx.mongo.api.response.HttpResponse;
+import id.blacklabs.vertx.mongo.dto.ProductDTO;
 import id.blacklabs.vertx.mongo.service.ProductService;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.Collections;
 
 /**
  * @author krissadewo
@@ -34,7 +30,8 @@ public class ProductApi {
         router.clear();
         router.route().handler(BodyHandler.create());
         router.post("/products").handler(this::save);
-        router.get("/products").handler(this::get);
+        router.get("/products").handler(this::find);
+        router.put("/products").handler(this::update);
     }
 
     private void save(RoutingContext context) {
@@ -53,12 +50,18 @@ public class ProductApi {
         });
     }
 
-    private void get(RoutingContext context) {
-        service.find(new ProductDTO().toDocument(context.getBodyAsString()), event -> {
+    private void find(RoutingContext context) {
+        ProductDTO dto = new ProductDTO();
+
+        service.find(dto.toParam(context.getBodyAsString()), event -> {
             if (event.succeeded()) {
                 context.response()
                     .putHeader("content-type", "application/json")
-                    .end(Json.encode(new ProductDTO().toDTO(event.result())));
+                    .end(Json.encode(HttpResponse.Many
+                        .builder()
+                        .data(dto.toDTO(event.result()))
+                        .build()
+                    ));
             } else {
                 context.response()
                     .putHeader("content-type", "application/json")
@@ -67,42 +70,17 @@ public class ProductApi {
         });
     }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    static class ProductDTO implements Serializable {
-
-        private String id;
-
-        private String name;
-
-        private String sku;
-
-        private String type;
-
-        private int qty;
-
-        private String color;
-
-        public ProductDTO toDTO(Product object) {
-            ProductDTO dto = new ProductDTO();
-            dto.setId(object.getId().toHexString());
-            dto.setName(object.getName());
-            dto.setQty(object.getQty());
-            dto.setColor(object.getColor());
-            dto.setSku(object.getSku());
-
-            return dto;
-        }
-
-        public Collection<ProductDTO> toDTO(Collection<Product> collection) {
-            return collection.stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-        }
-
-        public Product toDocument(String json) {
-            return Json.decodeValue(json, Product.class);
-        }
+    private void update(RoutingContext context) {
+        service.update(new ProductDTO().toDocument(context.getBodyAsString()), event -> {
+            if (event.succeeded()) {
+                context.response()
+                    .putHeader("content-type", "application/json")
+                    .end(Json.encode(event.result()));
+            } else {
+                context.response()
+                    .putHeader("content-type", "application/json")
+                    .end("failed");
+            }
+        });
     }
 }

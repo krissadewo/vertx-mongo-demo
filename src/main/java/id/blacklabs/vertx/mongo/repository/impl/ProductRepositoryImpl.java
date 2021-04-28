@@ -55,6 +55,23 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public void update(Product document, Handler<AsyncResult<String>> resultHandler) {
+        mongoConfig.getProductCollection()
+            .findOneAndReplace(Filters.eq("_id", document.getId()), document)
+            .subscribe(new MongoSubscriber<>() {
+                @Override
+                public void onSuccess(Product result) {
+                    logger.info("update product success");
+
+                    resultHandler.handle(Future.succeededFuture(StatusCode.UPDATE_SUCCESS));
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    logger.error("update product failed : {}", throwable.getCause().getMessage());
+
+                    resultHandler.handle(Future.failedFuture(StatusCode.UPDATE_FAILED));
+                }
+            });
     }
 
     @Override
@@ -102,6 +119,25 @@ public class ProductRepositoryImpl implements ProductRepository {
                     super.onComplete();
 
                     resultHandler.handle(Future.succeededFuture(getReceived()));
+                }
+            });
+    }
+
+    @Override
+    public void count(Product param, Handler<AsyncResult<Long>> resultHandler) {
+        mongoConfig.getProductCollection()
+            .countDocuments()
+            .subscribe(new MongoSubscriber<>() {
+                @Override
+                public void onSuccess(Long result) {
+                    resultHandler.handle(Future.succeededFuture(result));
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    logger.error("finding product failed : {}", throwable.getCause().getMessage());
+
+                    resultHandler.handle(Future.failedFuture(throwable));
                 }
             });
     }
