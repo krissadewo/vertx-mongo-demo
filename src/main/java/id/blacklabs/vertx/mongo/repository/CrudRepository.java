@@ -1,7 +1,6 @@
 package id.blacklabs.vertx.mongo.repository;
 
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.shareddata.Shareable;
 
 import java.util.List;
@@ -12,16 +11,16 @@ import java.util.List;
  */
 public interface CrudRepository<T> extends Shareable {
 
-    void save(T document, Handler<AsyncResult<String>> resultHandler);
+    void save(T document, Promise<String> promise);
 
-    void update(T document, Handler<AsyncResult<String>> resultHandler);
+    void update(T document, Promise<String> promise);
 
-    void delete(String id, Handler<AsyncResult<String>> resultHandler);
+    void delete(String id, Promise<String> promise);
 
-    void findById(String id, Handler<AsyncResult<T>> resultHandler);
+    void findById(String id, Promise<T> promise);
 
-    void find(T param, int limit, int offset, Handler<AsyncResult<List<T>>> resultHandler);
+    void find(T param, int limit, int offset, Promise<List<T>> promise);
 
-    void count(T param, Handler<AsyncResult<Long>> resultHandler);
+    void count(T param, Promise<Long> promise);
 
 }

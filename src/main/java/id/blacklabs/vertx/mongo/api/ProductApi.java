@@ -4,20 +4,21 @@ import id.blacklabs.vertx.mongo.api.response.HttpResponse;
 import id.blacklabs.vertx.mongo.document.Product;
 import id.blacklabs.vertx.mongo.dto.ProductDTO;
 import id.blacklabs.vertx.mongo.service.ProductService;
-import io.vertx.core.Future;
-import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.util.function.Tuple2;
+
+import java.util.List;
 
 /**
  * @author krissadewo
  * @date 4/24/21 3:09 PM
  */
-public class ProductApi {
+public class ProductApi implements BaseApi {
 
     private final ProductService service;
 
@@ -35,70 +36,63 @@ public class ProductApi {
     }
 
     private void save(RoutingContext context) {
-        service.save(new ProductDTO().toDocument(context.getBodyAsString()), event -> {
-            logger.info(event.result());
-
-            if (event.succeeded()) {
+        service.save(new ProductDTO().toDocument(context.getBodyAsString()), new PromiseResponseHandler<>() {
+            @Override
+            public void onSuccess(String result) {
                 HttpResponse.Single single = HttpResponse.Single.builder()
-                    .status(event.result())
+                    .status(result)
                     .build();
 
                 doSuccessResponse(context, single);
-            } else {
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
                 doFailedResponse(context);
+
             }
         });
     }
 
     private void find(RoutingContext context) {
         ProductDTO dto = new ProductDTO();
-        HttpResponse.Many many = HttpResponse.Many.builder().build();
 
         Product param = dto.toParam(context.getBodyAsString());
         int limit = Integer.parseInt(context.queryParams().get("limit"));
         int offset = Integer.parseInt(context.queryParams().get("offset"));
 
-        service.find(param, limit, offset, event -> {
-            if (event.succeeded()) {
-                many.setData(dto.toDTO(event.result()));
+        service.find(param, limit, offset, new PromiseResponseHandler<>() {
+            @Override
+            public void onSuccess(Tuple2<List<Product>, Long> result) {
+                HttpResponse.Many many = HttpResponse.Many.builder().build();
+                many.setData(dto.toDTO(result.getT1()));
+                many.setRows(result.getT2());
 
-                service.count(dto.toParam(context.getBodyAsString()), count -> {
-                    if (count.succeeded()) {
-                        many.setRows(count.result());
+                doSuccessResponse(context, many);
+            }
 
-                        doSuccessResponse(context, many);
-                    }
-                });
-            } else {
-                doFailedResponse(context);
+            @Override
+            public void onFailure(Throwable cause) {
             }
         });
     }
 
     private void update(RoutingContext context) {
-        service.update(new ProductDTO().toDocument(context.getBodyAsString()), event -> {
-            if (event.succeeded()) {
+        service.update(new ProductDTO().toDocument(context.getBodyAsString()), new PromiseResponseHandler<>() {
+            @Override
+            public void onSuccess(String result) {
                 HttpResponse.Single single = HttpResponse.Single.builder()
-                    .status(event.result())
+                    .status(result)
                     .build();
 
                 doSuccessResponse(context, single);
-            } else {
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
                 doFailedResponse(context);
             }
         });
-    }
-
-    private Future<Void> doSuccessResponse(RoutingContext context, Object object) {
-        return context.response()
-            .putHeader("content-type", "application/json")
-            .end(Json.encode(object));
-    }
-
-    private Future<Void> doFailedResponse(RoutingContext context) {
-        return context.response()
-            .putHeader("content-type", "application/json")
-            .end("failed");
     }
 
 }

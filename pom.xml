@@ -38,19 +38,13 @@
     <dependencies>
         <dependency>
             <groupId>io.vertx</groupId>
-            <artifactId>vertx-codegen</artifactId>
-            <scope>provided</scope>
-            <classifier>processor</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-service-proxy</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.vertx</groupId>
             <artifactId>vertx-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>3.4.5</version>
         </dependency>
 
         <dependency>

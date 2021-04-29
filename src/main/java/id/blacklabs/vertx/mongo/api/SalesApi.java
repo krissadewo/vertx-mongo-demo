@@ -1,5 +1,6 @@
 package id.blacklabs.vertx.mongo.api;
 
+import id.blacklabs.vertx.mongo.api.response.HttpResponse;
 import id.blacklabs.vertx.mongo.dto.SalesDTO;
 import id.blacklabs.vertx.mongo.service.SalesService;
 import io.vertx.ext.web.Router;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author krissadewo
  * @date 4/26/21 2:36 PM
  */
-public class SalesApi {
+public class SalesApi implements BaseApi {
 
     private final SalesService service;
 
@@ -29,17 +30,18 @@ public class SalesApi {
     }
 
     private void save(RoutingContext context) {
-        service.save(new SalesDTO().toDocument(context.getBodyAsString()), event -> {
-            logger.info(event.result());
+        service.save(new SalesDTO().toDocument(context.getBodyAsString()), new PromiseResponseHandler<>() {
+            @Override
+            public void onSuccess(String result) {
+                HttpResponse.Single single = HttpResponse.Single.builder()
+                    .status(result)
+                    .build();
 
-            if (event.succeeded()) {
-                context.response()
-                    .putHeader("content-type", "application/json")
-                    .end("success");
-            } else {
-                context.response()
-                    .putHeader("content-type", "application/json")
-                    .end("failed");
+                doSuccessResponse(context, single);
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
             }
         });
     }

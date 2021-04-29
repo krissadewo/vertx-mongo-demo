@@ -5,9 +5,9 @@ import id.blacklabs.vertx.mongo.document.Sales;
 import id.blacklabs.vertx.mongo.repository.ProductRepository;
 import id.blacklabs.vertx.mongo.repository.SalesRepository;
 import id.blacklabs.vertx.mongo.repository.impl.SalesRepositoryImpl;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.future.PromiseImpl;
 import lombok.Builder;
 
 /**
@@ -21,17 +21,18 @@ public class SalesService extends AbstractApplicationService {
         super(vertx);
     }
 
-    public void save(Sales sales, Handler<AsyncResult<String>> resultHandler) {
-        repositoryContext.get(ProductRepository.class)
-            .findById(sales.getProduct().getId().toHexString(), event -> {
-                Product product = event.result();
+    public void save(Sales sales, Promise<String> promise) {
+        Promise<Product> promiseProduct = new PromiseImpl<>();
 
-                if (product != null) {
-                    sales.setProduct(product);
+        repositoryContext.get(ProductRepository.class).findById(sales.getProduct().getId().toHexString(), promiseProduct);
 
-                    repositoryContext.get(SalesRepository.class).save(sales, resultHandler);
-                }
-            });
+        promiseProduct.future().onComplete(event -> {
+            if (event != null) {
+                sales.setProduct(event.result());
+
+                repositoryContext.get(SalesRepository.class).save(sales, promise);
+            }
+        });
     }
 
     @Override

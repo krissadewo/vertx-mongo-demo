@@ -7,10 +7,7 @@ import id.blacklabs.vertx.mongo.config.MongoConfig;
 import id.blacklabs.vertx.mongo.context.ConfigContext;
 import id.blacklabs.vertx.mongo.document.Sales;
 import id.blacklabs.vertx.mongo.repository.SalesRepository;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +28,7 @@ public class SalesRepositoryImpl implements SalesRepository {
     }
 
     @Override
-    public void save(Sales sales, Handler<AsyncResult<String>> resultHandler) {
+    public void save(Sales sales, Promise<String> promise) {
         mongoConfig.getSalesCollection()
             .insertOne(sales)
             .subscribe(new MongoSubscriber<>() {
@@ -39,36 +36,39 @@ public class SalesRepositoryImpl implements SalesRepository {
                 public void onSuccess(InsertOneResult result) {
                     logger.info("saving sales success");
 
-                    resultHandler.handle(Future.succeededFuture(StatusCode.SAVE_SUCCESS));
+                    promise.handle(Future.succeededFuture(StatusCode.SAVE_SUCCESS));
                 }
 
                 @Override
                 public void onFailure(Throwable throwable) {
                     logger.error("saving sales failed : {}", throwable.getCause().getMessage());
 
-                    resultHandler.handle(Future.failedFuture(StatusCode.SAVE_FAILED));
+                    promise.handle(Future.failedFuture(StatusCode.SAVE_FAILED));
                 }
             });
     }
 
     @Override
-    public void update(Sales document, Handler<AsyncResult<String>> resultHandler) {
+    public void update(Sales document, Promise<String> promise) {
+
     }
 
     @Override
-    public void delete(String id, Handler<AsyncResult<String>> resultHandler) {
+    public void delete(String id, Promise<String> promise) {
+
     }
 
     @Override
-    public void findById(String id, Handler<AsyncResult<Sales>> asyncResultHandler) {
+    public void findById(String id, Promise<Sales> promise) {
+
     }
 
     @Override
-    public void find(Sales param, int limit, int offset, Handler<AsyncResult<List<Sales>>> resultHandler) {
+    public void find(Sales param, int limit, int offset, Promise<List<Sales>> promise) {
     }
 
     @Override
-    public void count(Sales param, Handler<AsyncResult<Long>> asyncResultHandler) {
+    public void count(Sales param, Promise<Long> promise) {
 
     }
 }
