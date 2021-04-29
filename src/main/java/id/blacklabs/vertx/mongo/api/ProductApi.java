@@ -64,9 +64,10 @@ public class ProductApi implements BaseApi {
         service.find(param, limit, offset, new PromiseResponseHandler<>() {
             @Override
             public void onSuccess(Tuple2<List<Product>, Long> result) {
-                HttpResponse.Many many = HttpResponse.Many.builder().build();
-                many.setData(dto.toDTO(result.getT1()));
-                many.setRows(result.getT2());
+                HttpResponse.Many many = HttpResponse.Many.builder()
+                    .data(dto.toDTO(result.getT1()))
+                    .rows(result.getT2())
+                    .build();
 
                 doSuccessResponse(context, many);
             }
