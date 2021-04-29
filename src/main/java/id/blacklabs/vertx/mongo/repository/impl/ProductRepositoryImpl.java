@@ -102,6 +102,8 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void find(Product param, int limit, int offset, Handler<AsyncResult<List<Product>>> resultHandler) {
         mongoConfig.getProductCollection()
             .find()
+            .skip(offset)
+            .limit(limit)
             .subscribe(new MongoSubscriber<>() {
                 @Override
                 public void onSuccess(Product result) {

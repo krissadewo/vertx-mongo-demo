@@ -1,9 +1,7 @@
 package id.blacklabs.vertx.mongo.context;
 
-import io.vertx.codegen.annotations.VertxGen;
 import io.vertx.core.Vertx;
 import io.vertx.core.shareddata.LocalMap;
-import io.vertx.core.shareddata.Shareable;
 
 import java.util.function.Supplier;
 

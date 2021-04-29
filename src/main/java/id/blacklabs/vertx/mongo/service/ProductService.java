@@ -29,8 +29,8 @@ public class ProductService extends AbstractApplicationService {
         repositoryContext.get(ProductRepository.class).update(product, resultHandler);
     }
 
-    public void find(Product product, Handler<AsyncResult<List<Product>>> resultHandler) {
-        repositoryContext.get(ProductRepository.class).find(product, 0, 10, resultHandler);
+    public void find(Product product, int limit, int offset, Handler<AsyncResult<List<Product>>> resultHandler) {
+        repositoryContext.get(ProductRepository.class).find(product, limit, offset, resultHandler);
     }
 
     public void count(Product product, Handler<AsyncResult<Long>> resultHandler) {
