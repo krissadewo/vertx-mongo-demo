@@ -2,7 +2,6 @@ package id.blacklabs.vertx.mongo.repository.impl;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.InsertOneResult;
-import id.blacklabs.vertx.mongo.common.MongoSubscriber;
 import id.blacklabs.vertx.mongo.common.StatusCode;
 import id.blacklabs.vertx.mongo.config.MongoConfig;
 import id.blacklabs.vertx.mongo.context.ConfigContext;
@@ -35,7 +34,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void save(Product product, Promise<String> promise) {
         mongoConfig.getProductCollection()
             .insertOne(product)
-            .subscribe(new MongoSubscriber<>() {
+            .subscribe(new SingleSubscriber<>() {
                 @Override
                 public void onSuccess(InsertOneResult result) {
                     logger.info("saving product success");
@@ -56,7 +55,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void update(Product document, Promise<String> promise) {
         mongoConfig.getProductCollection()
             .findOneAndReplace(Filters.eq("_id", document.getId()), document)
-            .subscribe(new MongoSubscriber<>() {
+            .subscribe(new ManySubscriber<>() {
                 @Override
                 public void onSuccess(Product result) {
                     logger.info("update product success");
@@ -81,7 +80,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void findById(String id, Promise<Product> promise) {
         mongoConfig.getProductCollection()
             .find(Filters.eq("_id", new ObjectId(id)))
-            .subscribe(new MongoSubscriber<>() {
+            .subscribe(new SingleSubscriber<>() {
                 @Override
                 public void onSuccess(Product result) {
                     promise.handle(Future.succeededFuture(result));
@@ -102,7 +101,7 @@ public class ProductRepositoryImpl implements ProductRepository {
             .find()
             .skip(offset)
             .limit(limit)
-            .subscribe(new MongoSubscriber<>() {
+            .subscribe(new ManySubscriber<>() {
                 @Override
                 public void onSuccess(Product result) {
                 }
@@ -125,7 +124,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void count(Product param, Promise<Long> promise) {
         mongoConfig.getProductCollection()
             .countDocuments()
-            .subscribe(new MongoSubscriber<>() {
+            .subscribe(new ManySubscriber<>() {
                 @Override
                 public void onSuccess(Long result) {
                     promise.handle(Future.succeededFuture(result));

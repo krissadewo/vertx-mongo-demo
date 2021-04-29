@@ -1,13 +1,14 @@
 package id.blacklabs.vertx.mongo.repository.impl;
 
 import com.mongodb.client.result.InsertOneResult;
-import id.blacklabs.vertx.mongo.common.MongoSubscriber;
 import id.blacklabs.vertx.mongo.common.StatusCode;
 import id.blacklabs.vertx.mongo.config.MongoConfig;
 import id.blacklabs.vertx.mongo.context.ConfigContext;
 import id.blacklabs.vertx.mongo.document.Sales;
 import id.blacklabs.vertx.mongo.repository.SalesRepository;
-import io.vertx.core.*;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public class SalesRepositoryImpl implements SalesRepository {
     public void save(Sales sales, Promise<String> promise) {
         mongoConfig.getSalesCollection()
             .insertOne(sales)
-            .subscribe(new MongoSubscriber<>() {
+            .subscribe(new SingleSubscriber<>() {
                 @Override
                 public void onSuccess(InsertOneResult result) {
                     logger.info("saving sales success");
@@ -50,17 +51,14 @@ public class SalesRepositoryImpl implements SalesRepository {
 
     @Override
     public void update(Sales document, Promise<String> promise) {
-
     }
 
     @Override
     public void delete(String id, Promise<String> promise) {
-
     }
 
     @Override
     public void findById(String id, Promise<Sales> promise) {
-
     }
 
     @Override
