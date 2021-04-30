@@ -1,6 +1,5 @@
 package id.blacklabs.vertx.mongo;
 
-import com.mongodb.reactivestreams.client.MongoClient;
 import id.blacklabs.vertx.mongo.config.MongoConfig;
 import id.blacklabs.vertx.mongo.verticle.ProductVerticle;
 import id.blacklabs.vertx.mongo.verticle.SalesVerticle;
@@ -20,16 +19,19 @@ public class MainVerticle extends AbstractVerticle {
     private final List<String> deployedVerticles = new ArrayList<>();
 
     @Override
-    public void start(Promise<Void> startPromise) throws Exception {
+    public void start(Promise<Void> startPromise) {
         Router router = Router.router(vertx);
+
+        MongoConfig.builder()
+            .config(config())
+            .vertx(vertx)
+            .build(); //setup mongo
 
         vertx.createHttpServer()
             .requestHandler(router)
             .listen(8888, http -> {
                 if (http.succeeded()) {
                     startPromise.complete();
-
-                    MongoConfig.builder().vertx(vertx).build();
 
                     vertx.deployVerticle(new ProductVerticle(router), event -> {
                         if (event.succeeded()) {

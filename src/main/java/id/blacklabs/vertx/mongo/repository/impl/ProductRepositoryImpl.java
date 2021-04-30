@@ -124,7 +124,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void count(Product param, Promise<Long> promise) {
         mongoConfig.getProductCollection()
             .countDocuments()
-            .subscribe(new ManySubscriber<>() {
+            .subscribe(new SingleSubscriber<>() {
                 @Override
                 public void onSuccess(Long result) {
                     promise.handle(Future.succeededFuture(result));

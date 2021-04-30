@@ -1,0 +1,5 @@
+{
+    "active.profile": "local",
+    "mongo.connection.string": "mongodb://root:root@mongo.local1:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false",
+    "mongo.database.name": "vertx_demo"
+}
