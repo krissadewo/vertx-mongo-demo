@@ -123,7 +123,6 @@ public interface CrudRepository<T> extends Shareable {
             super.errors = new ArrayList<>();
             super.latch = new CountDownLatch(1);
         }
-
     }
 
     abstract class SingleSubscriber<T> extends MongoSubscriber<T> {

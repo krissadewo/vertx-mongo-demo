@@ -1,34 +1,38 @@
-package id.blacklabs.vertx.mongo.api;
+package id.blacklabs.vertx.mongo.module.product.infrastructure.api;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import id.blacklabs.vertx.mongo.api.BaseApi;
 import id.blacklabs.vertx.mongo.api.response.HttpResponse;
-import id.blacklabs.vertx.mongo.document.Product;
-import id.blacklabs.vertx.mongo.dto.ProductDTO;
-import id.blacklabs.vertx.mongo.service.ProductService;
+import id.blacklabs.vertx.mongo.common.Handler;
+import id.blacklabs.vertx.mongo.common.HandlerImpl;
+import id.blacklabs.vertx.mongo.dto.ProductDto;
+import id.blacklabs.vertx.mongo.module.product.domain.usecase.CrudOperation;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.util.function.Tuple2;
 
-import java.util.List;
+import javax.inject.Named;
+import java.util.Collection;
 
 /**
  * @author krissadewo
  * @date 4/24/21 3:09 PM
  */
+@Singleton
 public class ProductApi implements BaseApi {
 
-    private final ProductService service;
+    private final CrudOperation operation;
 
     private static final Logger logger = LoggerFactory.getLogger(ProductApi.class);
 
-    @Builder
-    public ProductApi(Router router, ProductService service) {
-        this.service = service;
+    @Inject
+    public ProductApi(@Named("router") Router router, CrudOperation operation) {
+        this.operation = operation;
 
-        router.clear();
         router.route().handler(BodyHandler.create());
         router.post("/products").handler(this::save);
         router.get("/products").handler(this::find);
@@ -36,61 +40,58 @@ public class ProductApi implements BaseApi {
     }
 
     private void save(RoutingContext context) {
-        service.save(new ProductDTO().toDocument(context.getBodyAsString()), new PromiseResponseHandler<>() {
-            @Override
-            public void onSuccess(String result) {
+        operation.save(new ProductDto().fromJson(context.getBodyAsString()), new Handler<>() {
+            public void success(String t) {
                 HttpResponse.Single single = HttpResponse.Single.builder()
-                    .status(result)
-                    .build();
+                        .status(t)
+                        .build();
 
                 doSuccessResponse(context, single);
             }
 
-            @Override
-            public void onFailure(Throwable cause) {
+            public void failure(Throwable throwable) {
                 doFailedResponse(context);
-
             }
         });
     }
 
     private void find(RoutingContext context) {
-        ProductDTO dto = new ProductDTO();
+        ProductDto dto = new ProductDto();
 
-        Product param = dto.toParam(context.getBodyAsString());
         int limit = Integer.parseInt(context.queryParams().get("limit"));
         int offset = Integer.parseInt(context.queryParams().get("offset"));
 
-        service.find(param, limit, offset, new PromiseResponseHandler<>() {
+        operation.find(dto, limit, offset, new HandlerImpl<>() {
             @Override
-            public void onSuccess(Tuple2<List<Product>, Long> result) {
+            public void success(Tuple2<Collection<ProductDto>, Long> objects) {
                 HttpResponse.Many many = HttpResponse.Many.builder()
-                    .data(dto.toDTO(result.getT1()))
-                    .rows(result.getT2())
-                    .build();
+                        .data(objects.getT1())
+                        .rows(objects.getT2())
+                        .build();
 
                 doSuccessResponse(context, many);
             }
 
             @Override
-            public void onFailure(Throwable cause) {
+            public void failure(Throwable throwable) {
+                doFailedResponse(context);
             }
         });
     }
 
     private void update(RoutingContext context) {
-        service.update(new ProductDTO().toDocument(context.getBodyAsString()), new PromiseResponseHandler<>() {
+        operation.update(new ProductDto().fromJson(context.getBodyAsString()), new Handler<>() {
             @Override
-            public void onSuccess(String result) {
+            public void success(String result) {
                 HttpResponse.Single single = HttpResponse.Single.builder()
-                    .status(result)
-                    .build();
+                        .status(result)
+                        .build();
 
                 doSuccessResponse(context, single);
             }
 
             @Override
-            public void onFailure(Throwable cause) {
+            public void failure(Throwable cause) {
                 doFailedResponse(context);
             }
         });

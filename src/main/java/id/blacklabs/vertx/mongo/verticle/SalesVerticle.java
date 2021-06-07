@@ -1,7 +1,10 @@
 package id.blacklabs.vertx.mongo.verticle;
 
-import id.blacklabs.vertx.mongo.api.SalesApi;
-import id.blacklabs.vertx.mongo.service.SalesService;
+import com.google.inject.Guice;
+import id.blacklabs.vertx.mongo.module.VertxModule;
+import id.blacklabs.vertx.mongo.module.product.ProductModule;
+import id.blacklabs.vertx.mongo.module.sales.SalesModule;
+import id.blacklabs.vertx.mongo.module.sales.infrastructure.service.SalesService;
 import io.vertx.ext.web.Router;
 
 /**
@@ -17,17 +20,11 @@ public class SalesVerticle extends ApplicationVerticle<SalesService> {
     }
 
     @Override
-    void buildApi(SalesService service) {
-        SalesApi.builder()
-            .service(service)
-            .router(router)
-            .build();
-    }
-
-    @Override
-    SalesService buildService() {
-        return SalesService.builder()
-            .vertx(vertx)
-            .build();
+    void buildModule() {
+        Guice.createInjector(
+                new VertxModule(vertx, router),
+                new ProductModule(),
+                new SalesModule()
+        );
     }
 }

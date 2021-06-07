@@ -1,4 +1,4 @@
-package id.blacklabs.vertx.mongo.repository.impl;
+package id.blacklabs.vertx.mongo.module.product.infrastructure.repository.impl;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.InsertOneResult;
@@ -6,7 +6,7 @@ import id.blacklabs.vertx.mongo.common.StatusCode;
 import id.blacklabs.vertx.mongo.config.MongoConfig;
 import id.blacklabs.vertx.mongo.context.ConfigContext;
 import id.blacklabs.vertx.mongo.document.Product;
-import id.blacklabs.vertx.mongo.repository.ProductRepository;
+import id.blacklabs.vertx.mongo.module.product.infrastructure.repository.ProductRepository;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -46,7 +46,7 @@ public class ProductRepositoryImpl implements ProductRepository {
                 public void onFailure(Throwable throwable) {
                     logger.error("saving product failed : {}", throwable.getCause().getMessage());
 
-                    promise.handle(Future.failedFuture(StatusCode.SAVE_FAILED));
+                    promise.handle(Future.failedFuture(throwable));
                 }
             });
     }

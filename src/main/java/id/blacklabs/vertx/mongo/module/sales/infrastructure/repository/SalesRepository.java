@@ -1,6 +1,7 @@
-package id.blacklabs.vertx.mongo.repository;
+package id.blacklabs.vertx.mongo.module.sales.infrastructure.repository;
 
 import id.blacklabs.vertx.mongo.document.Sales;
+import id.blacklabs.vertx.mongo.repository.CrudRepository;
 
 /**
  * @author krissadewo

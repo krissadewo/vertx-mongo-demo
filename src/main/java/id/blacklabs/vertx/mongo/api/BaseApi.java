@@ -9,7 +9,7 @@ import io.vertx.ext.web.RoutingContext;
  * @author krissadewo
  * @date 4/29/21 3:05 PM
  */
-interface BaseApi {
+public interface BaseApi {
 
     default void doSuccessResponse(RoutingContext context, Object object) {
         context.response()

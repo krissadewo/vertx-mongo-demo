@@ -3,6 +3,7 @@ package id.blacklabs.vertx.mongo.verticle;
 import id.blacklabs.vertx.mongo.service.AbstractApplicationService;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.ext.web.Router;
 
 /**
  * @author krissadewo
@@ -14,10 +15,9 @@ public abstract class ApplicationVerticle<T extends AbstractApplicationService> 
     public void start(Promise<Void> startPromise) throws Exception {
         super.start(startPromise);
 
-        buildApi(buildService());
+        buildModule();
     }
 
-    abstract void buildApi(T service);
+    abstract void buildModule();
 
-    abstract T buildService();
 }

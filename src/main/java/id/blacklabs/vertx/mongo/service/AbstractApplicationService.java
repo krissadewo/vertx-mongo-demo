@@ -21,6 +21,6 @@ public abstract class AbstractApplicationService {
         registerRepository(vertx);
     }
 
-    abstract void registerRepository(Vertx vertx);
+    protected abstract void registerRepository(Vertx vertx);
 
 }

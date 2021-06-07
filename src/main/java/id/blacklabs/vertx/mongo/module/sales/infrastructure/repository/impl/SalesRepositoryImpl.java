@@ -1,11 +1,12 @@
-package id.blacklabs.vertx.mongo.repository.impl;
+package id.blacklabs.vertx.mongo.module.sales.infrastructure.repository.impl;
 
 import com.mongodb.client.result.InsertOneResult;
 import id.blacklabs.vertx.mongo.common.StatusCode;
 import id.blacklabs.vertx.mongo.config.MongoConfig;
 import id.blacklabs.vertx.mongo.context.ConfigContext;
 import id.blacklabs.vertx.mongo.document.Sales;
-import id.blacklabs.vertx.mongo.repository.SalesRepository;
+import id.blacklabs.vertx.mongo.module.product.infrastructure.repository.impl.ProductRepositoryImpl;
+import id.blacklabs.vertx.mongo.module.sales.infrastructure.repository.SalesRepository;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -29,7 +30,7 @@ public class SalesRepositoryImpl implements SalesRepository {
     }
 
     @Override
-    public void save(Sales sales, Promise<String> promise) {
+    public void save(Sales sales, Promise<String> handler) {
         mongoConfig.getSalesCollection()
             .insertOne(sales)
             .subscribe(new SingleSubscriber<>() {
@@ -37,14 +38,14 @@ public class SalesRepositoryImpl implements SalesRepository {
                 public void onSuccess(InsertOneResult result) {
                     logger.info("saving sales success");
 
-                    promise.handle(Future.succeededFuture(StatusCode.SAVE_SUCCESS));
+                    handler.handle(Future.succeededFuture(StatusCode.SAVE_SUCCESS));
                 }
 
                 @Override
                 public void onFailure(Throwable throwable) {
                     logger.error("saving sales failed : {}", throwable.getCause().getMessage());
 
-                    promise.handle(Future.failedFuture(StatusCode.SAVE_FAILED));
+                    handler.handle(Future.failedFuture(throwable));
                 }
             });
     }

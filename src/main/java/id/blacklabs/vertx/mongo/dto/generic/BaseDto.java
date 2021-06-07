@@ -11,15 +11,17 @@ import java.util.Collection;
  * @date 4/28/21 5:45 PM
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public interface BaseDTO<D, E extends DocumentAware> extends Serializable {
+public interface BaseDto<D, E extends DocumentAware> extends Serializable {
 
-    D toDTO(E object);
+    D toDto(E object);
 
-    Collection<D> toDTO(Collection<E> collection);
+    Collection<D> toDto(Collection<E> collection);
 
-    E toDocument(String json);
+    E toDocument(D dto);
 
-    E toParam(String json);
+    D toParam(String json);
 
     Collection<E> toDocument(Collection<D> collection);
+
+    D fromJson(String json);
 }
