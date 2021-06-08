@@ -31,13 +31,16 @@ public class CrudOperationImpl implements CrudOperation {
 
         productAdapter.findById(dto.getProduct().getId(), productHandler);
 
-        productHandler.thenCompose(productDto -> {
-            dto.setProduct(productDto);
+        productHandler
+            .exitException(handler)
+            .thenApply(productDto -> {
+                if (productDto != null) {
+                    dto.setProduct(productDto);
 
-            salesAdapter.save(dto, handler);
+                    salesAdapter.save(dto, handler);
+                }
 
-            return CompletableFuture.completedFuture(handler);
-        })
-        .toCompletableFuture();
+                return CompletableFuture.completedFuture(handler);
+            });
     }
 }

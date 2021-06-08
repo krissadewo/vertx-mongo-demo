@@ -35,18 +35,21 @@ public class SalesApi implements BaseApi {
     }
 
     private void save(RoutingContext context) {
+        HttpResponse.Single single = HttpResponse.Single.builder().build();
+
         operation.save(new SalesDto().fromJson(context.getBodyAsString()), new Handler<>() {
             @Override
             public void success(String result) {
-                HttpResponse.Single single = HttpResponse.Single.builder()
-                    .status(result)
-                    .build();
+                single.setStatus(result);
 
                 doSuccessResponse(context, single);
             }
 
             @Override
             public void failure(Throwable cause) {
+                single.setStatus(cause.getMessage());
+
+                doFailedResponse(context, single);
             }
         });
     }

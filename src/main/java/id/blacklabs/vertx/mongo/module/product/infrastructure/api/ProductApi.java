@@ -49,7 +49,7 @@ public class ProductApi implements BaseApi {
             }
 
             public void failure(Throwable throwable) {
-                doFailedResponse(context);
+                doFailedResponse(context, throwable);
             }
         });
     }
@@ -73,7 +73,7 @@ public class ProductApi implements BaseApi {
 
             @Override
             public void failure(Throwable throwable) {
-                doFailedResponse(context);
+                doFailedResponse(context, throwable);
             }
         });
     }
@@ -91,7 +91,7 @@ public class ProductApi implements BaseApi {
 
             @Override
             public void failure(Throwable cause) {
-                doFailedResponse(context);
+                doFailedResponse(context, cause);
             }
         });
     }

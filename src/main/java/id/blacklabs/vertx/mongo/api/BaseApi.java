@@ -1,7 +1,5 @@
 package id.blacklabs.vertx.mongo.api;
 
-import io.vertx.core.Future;
-import io.vertx.core.Promise;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 
@@ -17,9 +15,9 @@ public interface BaseApi {
             .end(Json.encode(object));
     }
 
-    default void doFailedResponse(RoutingContext context) {
+    default void doFailedResponse(RoutingContext context, Object object) {
         context.response()
             .putHeader("content-type", "application/json")
-            .end("failed");
+            .end(Json.encode(object));
     }
 }

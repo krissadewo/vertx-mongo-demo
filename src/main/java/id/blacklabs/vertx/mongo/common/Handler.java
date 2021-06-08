@@ -8,6 +8,16 @@ import java.util.concurrent.CompletableFuture;
  */
 public class Handler<T> extends CompletableFuture<T> {
 
+    public CompletableFuture<T> exitException(Handler<?> handler) {
+        return exceptionally(throwable -> {
+            if (throwable != null) {
+                handler.failure(throwable);
+            }
+
+            return null;
+        });
+    }
+
     public void success(T t) {
         complete(t);
     }
