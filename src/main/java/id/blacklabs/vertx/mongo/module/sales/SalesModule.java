@@ -1,10 +1,14 @@
 package id.blacklabs.vertx.mongo.module.sales;
 
 import com.google.inject.AbstractModule;
+import id.blacklabs.vertx.mongo.module.product.infrastructure.repository.ProductRepository;
+import id.blacklabs.vertx.mongo.module.product.infrastructure.repository.impl.ProductRepositoryImpl;
 import id.blacklabs.vertx.mongo.module.sales.domain.port.SalesAdapter;
 import id.blacklabs.vertx.mongo.module.sales.domain.usecase.CrudOperation;
 import id.blacklabs.vertx.mongo.module.sales.domain.usecase.CrudOperationImpl;
 import id.blacklabs.vertx.mongo.module.sales.infrastructure.api.SalesApi;
+import id.blacklabs.vertx.mongo.module.sales.infrastructure.repository.SalesRepository;
+import id.blacklabs.vertx.mongo.module.sales.infrastructure.repository.impl.SalesRepositoryImpl;
 import id.blacklabs.vertx.mongo.module.sales.infrastructure.service.SalesService;
 
 /**
@@ -19,5 +23,7 @@ public class SalesModule extends AbstractModule {
 
         bind(SalesAdapter.class).to(SalesService.class);
         bind(CrudOperation.class).to(CrudOperationImpl.class);
+
+        bind(SalesRepository.class).to(SalesRepositoryImpl.class);
     }
 }

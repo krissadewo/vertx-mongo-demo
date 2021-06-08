@@ -32,8 +32,12 @@ public class ProductDto implements BaseDto<ProductDto, Product>, Dto {
 
     @Override
     public ProductDto toDto(Product object) {
+        if (object == null) {
+            return null;
+        }
+
         ProductDto dto = new ProductDto();
-        dto.setId(object.getId().toHexString());
+        dto.setId(object.getId() != null ? object.getId().toHexString() : null);
         dto.setName(object.getName());
         dto.setQty(object.getQty());
         dto.setColor(object.getColor());

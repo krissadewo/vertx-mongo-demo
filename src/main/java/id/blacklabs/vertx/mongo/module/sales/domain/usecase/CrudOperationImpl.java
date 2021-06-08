@@ -27,11 +27,11 @@ public class CrudOperationImpl implements CrudOperation {
 
     @Override
     public void save(SalesDto dto, Handler<String> handler) {
-        Handler<ProductDto> productDtoHandler = new Handler<>();
+        Handler<ProductDto> productHandler = new Handler<>();
 
-        productAdapter.findById(dto.getProduct().getId(), productDtoHandler);
+        productAdapter.findById(dto.getProduct().getId(), productHandler);
 
-        productDtoHandler.thenCompose(productDto -> {
+        productHandler.thenCompose(productDto -> {
             dto.setProduct(productDto);
 
             salesAdapter.save(dto, handler);

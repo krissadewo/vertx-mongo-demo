@@ -1,5 +1,7 @@
 package id.blacklabs.vertx.mongo.module.sales.infrastructure.repository.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.mongodb.client.result.InsertOneResult;
 import id.blacklabs.vertx.mongo.common.StatusCode;
 import id.blacklabs.vertx.mongo.config.MongoConfig;
@@ -25,7 +27,8 @@ public class SalesRepositoryImpl implements SalesRepository {
 
     private final MongoConfig mongoConfig;
 
-    public SalesRepositoryImpl(Vertx vertx) {
+    @Inject
+    public SalesRepositoryImpl(@Named("vertx") Vertx vertx) {
         this.mongoConfig = new ConfigContext(vertx).get(MongoConfig.class);
     }
 

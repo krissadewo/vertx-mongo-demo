@@ -33,6 +33,8 @@ public interface CrudRepository<T> extends Shareable {
 
         private List<T> received;
 
+        private T object;
+
         private List<Throwable> errors;
 
         private CountDownLatch latch;
@@ -53,6 +55,8 @@ public interface CrudRepository<T> extends Shareable {
             received.add(t);
 
             onSuccess(t);
+
+            object = t;
         }
 
         public abstract void onSuccess(final T result);
@@ -79,6 +83,10 @@ public interface CrudRepository<T> extends Shareable {
 
         public List<T> getReceived() {
             return received;
+        }
+
+        public T getObject() {
+            return object;
         }
 
         public Throwable getError() {

@@ -2,14 +2,12 @@ package id.blacklabs.vertx.mongo.config;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.client.model.Filters;
+import com.mongodb.connection.SocketSettings;
 import com.mongodb.reactivestreams.client.MongoClient;
 import com.mongodb.reactivestreams.client.MongoClients;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import id.blacklabs.vertx.mongo.common.CollectionName;
-import id.blacklabs.vertx.mongo.common.Environment;
-import id.blacklabs.vertx.mongo.common.SubscriberHelpers;
 import id.blacklabs.vertx.mongo.context.ConfigContext;
 import id.blacklabs.vertx.mongo.document.Product;
 import id.blacklabs.vertx.mongo.document.Sales;
@@ -22,6 +20,7 @@ import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
@@ -54,6 +53,11 @@ public class MongoConfig implements Shareable {
 
         MongoClient mongoClient = MongoClients.create(
             MongoClientSettings.builder()
+                .applyToSocketSettings(builder -> {
+                    builder.applySettings(SocketSettings.builder()
+                        .readTimeout(2000, TimeUnit.MILLISECONDS)
+                        .build());
+                })
                 .applyConnectionString(new ConnectionString(config.getString("mongo.connection.string")))
                 .codecRegistry(codecRegistry)
                 .build()

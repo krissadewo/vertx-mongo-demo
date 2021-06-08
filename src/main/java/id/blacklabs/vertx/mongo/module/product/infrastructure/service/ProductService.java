@@ -11,7 +11,6 @@ import id.blacklabs.vertx.mongo.document.Product;
 import id.blacklabs.vertx.mongo.dto.ProductDto;
 import id.blacklabs.vertx.mongo.module.product.domain.port.ProductAdapter;
 import id.blacklabs.vertx.mongo.module.product.infrastructure.repository.ProductRepository;
-import id.blacklabs.vertx.mongo.module.product.infrastructure.repository.impl.ProductRepositoryImpl;
 import id.blacklabs.vertx.mongo.service.AbstractApplicationService;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Promise;
@@ -29,24 +28,28 @@ import java.util.List;
 @Singleton
 public class ProductService extends AbstractApplicationService implements ProductAdapter {
 
+    ProductRepository productRepository;
+
     @Inject
-    public ProductService(@Named("vertx") Vertx vertx) {
+    public ProductService(@Named("vertx") Vertx vertx, ProductRepository productRepository) {
         super(vertx);
+
+        this.productRepository = productRepository;
     }
 
     @Override
     public void save(ProductDto dto, Handler<String> handler) {
-        repositoryContext.get(ProductRepository.class).save(dto.toDocument(dto), new PromiseHandler<>(handler));
+        productRepository.save(dto.toDocument(dto), new PromiseHandler<>(handler));
     }
 
     @Override
     public void update(ProductDto dto, Handler<String> handler) {
-        repositoryContext.get(ProductRepository.class).update(dto.toDocument(dto), new PromiseHandler<>(handler));
+        productRepository.update(dto.toDocument(dto), new PromiseHandler<>(handler));
     }
 
     @Override
     public void findById(String id, Handler<ProductDto> handler) {
-        repositoryContext.get(ProductRepository.class).findById(id, new PromiseWrapperHandler<>() {
+        productRepository.findById(id, new PromiseWrapperHandler<>() {
             @Override
             public void onSuccess(Product result) {
                 handler.success(new ProductDto().toDto(result));
@@ -64,8 +67,8 @@ public class ProductService extends AbstractApplicationService implements Produc
         Promise<List<Product>> promiseProduct = new PromiseImpl<>();
         Promise<Long> promiseCount = new PromiseImpl<>();
 
-        repositoryContext.get(ProductRepository.class).find(dto.toDocument(dto), limit, offset, promiseProduct);
-        repositoryContext.get(ProductRepository.class).count(dto.toDocument(dto), promiseCount);
+        productRepository.find(dto.toDocument(dto), limit, offset, promiseProduct);
+        productRepository.count(dto.toDocument(dto), promiseCount);
 
         CompositeFuture.all(promiseProduct.future(), promiseCount.future())
             .onSuccess(event -> {
@@ -78,8 +81,5 @@ public class ProductService extends AbstractApplicationService implements Produc
             });
     }
 
-    @Override
-    public void registerRepository(Vertx vertx) {
-        repositoryContext.putIfAbsent(ProductRepository.class, () -> new ProductRepositoryImpl(vertx));
-    }
+
 }

@@ -1,7 +1,6 @@
 package id.blacklabs.vertx.mongo.service;
 
 import id.blacklabs.vertx.mongo.context.ConfigContext;
-import id.blacklabs.vertx.mongo.context.RepositoryContext;
 import io.vertx.core.Vertx;
 
 /**
@@ -10,17 +9,9 @@ import io.vertx.core.Vertx;
  */
 public abstract class AbstractApplicationService {
 
-    protected RepositoryContext repositoryContext;
-
     protected ConfigContext configContext;
 
     public AbstractApplicationService(Vertx vertx) {
-        repositoryContext = new RepositoryContext(vertx);
         configContext = new ConfigContext(vertx);
-
-        registerRepository(vertx);
     }
-
-    protected abstract void registerRepository(Vertx vertx);
-
 }

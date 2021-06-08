@@ -1,5 +1,7 @@
 package id.blacklabs.vertx.mongo.module.product.infrastructure.repository.impl;
 
+import com.google.inject.Inject;
+import com.mongodb.MongoClientException;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.InsertOneResult;
 import id.blacklabs.vertx.mongo.common.StatusCode;
@@ -14,6 +16,7 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Named;
 import java.util.List;
 
 /**
@@ -26,7 +29,8 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     private final MongoConfig mongoConfig;
 
-    public ProductRepositoryImpl(Vertx vertx) {
+    @Inject
+    public ProductRepositoryImpl(@Named("vertx") Vertx vertx) {
         this.mongoConfig = new ConfigContext(vertx).get(MongoConfig.class);
     }
 
@@ -91,6 +95,13 @@ public class ProductRepositoryImpl implements ProductRepository {
                     logger.error("finding product failed : {}", throwable.getCause().getMessage());
 
                     promise.handle(Future.failedFuture(throwable));
+                }
+
+                @Override
+                public void onComplete() {
+                    if (getObject() == null) {
+                        promise.handle(Future.failedFuture(new MongoClientException(StatusCode.NOT_FOUND)));
+                    }
                 }
             });
     }

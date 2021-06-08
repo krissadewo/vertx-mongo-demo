@@ -6,7 +6,6 @@ import id.blacklabs.vertx.mongo.common.PromiseHandler;
 import id.blacklabs.vertx.mongo.dto.SalesDto;
 import id.blacklabs.vertx.mongo.module.sales.domain.port.SalesAdapter;
 import id.blacklabs.vertx.mongo.module.sales.infrastructure.repository.SalesRepository;
-import id.blacklabs.vertx.mongo.module.sales.infrastructure.repository.impl.SalesRepositoryImpl;
 import id.blacklabs.vertx.mongo.service.AbstractApplicationService;
 import io.vertx.core.Vertx;
 
@@ -18,19 +17,18 @@ import javax.inject.Named;
  */
 public class SalesService extends AbstractApplicationService implements SalesAdapter {
 
+    private final SalesRepository repository;
+
     @Inject
-    public SalesService(@Named("vertx") Vertx vertx) {
+    public SalesService(@Named("vertx") Vertx vertx, SalesRepository repository) {
         super(vertx);
+
+        this.repository = repository;
     }
 
     @Override
     public void save(SalesDto dto, Handler<String> handler) {
-        repositoryContext.get(SalesRepository.class).save(dto.toDocument(dto), new PromiseHandler<>(handler));
-    }
-
-    @Override
-    protected void registerRepository(Vertx vertx) {
-        repositoryContext.putIfAbsent(SalesRepository.class, () -> new SalesRepositoryImpl(vertx));
+        repository.save(dto.toDocument(dto), new PromiseHandler<>(handler));
     }
 
 }

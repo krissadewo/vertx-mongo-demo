@@ -11,4 +11,6 @@ public interface StatusCode {
     String UPDATE_SUCCESS = "0020";
     String UPDATE_FAILED = "0021";
 
+    String NOT_FOUND = "0013";
+
 }
