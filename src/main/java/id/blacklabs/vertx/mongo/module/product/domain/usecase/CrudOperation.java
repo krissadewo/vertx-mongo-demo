@@ -1,8 +1,8 @@
 package id.blacklabs.vertx.mongo.module.product.domain.usecase;
 
 import id.blacklabs.vertx.mongo.common.Handler;
+import id.blacklabs.vertx.mongo.common.argument.Arg2;
 import id.blacklabs.vertx.mongo.dto.ProductDto;
-import reactor.util.function.Tuple2;
 
 import java.util.Collection;
 
@@ -16,5 +16,5 @@ public interface CrudOperation {
 
     void update(ProductDto dto, Handler<String> handler);
 
-    void find(ProductDto dto, int limit, int offset, Handler<Tuple2<Collection<ProductDto>, Long>> handler);
+    void find(ProductDto dto, int limit, int offset, Handler<Arg2<Collection<ProductDto>, Long>> handler);
 }

@@ -22,31 +22,4 @@ public interface BaseApi {
             .putHeader("content-type", "application/json")
             .end("failed");
     }
-
-    abstract class PromiseResponseHandler<T> implements Promise<T> {
-
-        public abstract void onSuccess(T result);
-
-        public abstract void onFailure(Throwable cause);
-
-        @Override
-        public boolean tryComplete(T result) {
-            onSuccess(result);
-
-            return true;
-        }
-
-        @Override
-        public boolean tryFail(Throwable cause) {
-            onFailure(cause);
-
-            return true;
-        }
-
-        @Override
-        public Future<T> future() {
-            return null;
-        }
-    }
-
 }

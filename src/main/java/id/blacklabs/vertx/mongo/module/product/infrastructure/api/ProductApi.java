@@ -5,7 +5,7 @@ import com.google.inject.Singleton;
 import id.blacklabs.vertx.mongo.api.BaseApi;
 import id.blacklabs.vertx.mongo.api.response.HttpResponse;
 import id.blacklabs.vertx.mongo.common.Handler;
-import id.blacklabs.vertx.mongo.common.HandlerImpl;
+import id.blacklabs.vertx.mongo.common.argument.Arg2;
 import id.blacklabs.vertx.mongo.dto.ProductDto;
 import id.blacklabs.vertx.mongo.module.product.domain.usecase.CrudOperation;
 import io.vertx.ext.web.Router;
@@ -13,7 +13,6 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.util.function.Tuple2;
 
 import javax.inject.Named;
 import java.util.Collection;
@@ -43,8 +42,8 @@ public class ProductApi implements BaseApi {
         operation.save(new ProductDto().fromJson(context.getBodyAsString()), new Handler<>() {
             public void success(String t) {
                 HttpResponse.Single single = HttpResponse.Single.builder()
-                        .status(t)
-                        .build();
+                    .status(t)
+                    .build();
 
                 doSuccessResponse(context, single);
             }
@@ -61,13 +60,13 @@ public class ProductApi implements BaseApi {
         int limit = Integer.parseInt(context.queryParams().get("limit"));
         int offset = Integer.parseInt(context.queryParams().get("offset"));
 
-        operation.find(dto, limit, offset, new HandlerImpl<>() {
+        operation.find(dto, limit, offset, new Handler<>() {
             @Override
-            public void success(Tuple2<Collection<ProductDto>, Long> objects) {
+            public void success(Arg2<Collection<ProductDto>, Long> objects) {
                 HttpResponse.Many many = HttpResponse.Many.builder()
-                        .data(objects.getT1())
-                        .rows(objects.getT2())
-                        .build();
+                    .data(objects.getT1())
+                    .rows(objects.getT2())
+                    .build();
 
                 doSuccessResponse(context, many);
             }
@@ -84,8 +83,8 @@ public class ProductApi implements BaseApi {
             @Override
             public void success(String result) {
                 HttpResponse.Single single = HttpResponse.Single.builder()
-                        .status(result)
-                        .build();
+                    .status(result)
+                    .build();
 
                 doSuccessResponse(context, single);
             }

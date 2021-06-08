@@ -2,9 +2,9 @@ package id.blacklabs.vertx.mongo.module.product.domain.usecase;
 
 import com.google.inject.Inject;
 import id.blacklabs.vertx.mongo.common.Handler;
+import id.blacklabs.vertx.mongo.common.argument.Arg2;
 import id.blacklabs.vertx.mongo.dto.ProductDto;
 import id.blacklabs.vertx.mongo.module.product.domain.port.ProductAdapter;
-import reactor.util.function.Tuple2;
 
 import java.util.Collection;
 
@@ -32,7 +32,7 @@ public class CrudOperationImpl implements CrudOperation {
     }
 
     @Override
-    public void find(ProductDto dto, int limit, int offset, Handler<Tuple2<Collection<ProductDto>, Long>> handler) {
+    public void find(ProductDto dto, int limit, int offset, Handler<Arg2<Collection<ProductDto>, Long>> handler) {
         adapter.find(dto, limit, offset, handler);
     }
 }

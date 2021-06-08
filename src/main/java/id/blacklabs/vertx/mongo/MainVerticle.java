@@ -25,32 +25,32 @@ public class MainVerticle extends AbstractVerticle {
         Router router = new RouterImpl(vertx);
 
         MongoConfig.builder()
-                .config(config())
-                .vertx(vertx)
-                .build(); //setup mongo
+            .config(config())
+            .vertx(vertx)
+            .build(); //setup mongo
 
         vertx.createHttpServer()
-                .requestHandler(router)
-                .listen(8888, http -> {
-                    if (http.succeeded()) {
-                        startPromise.complete();
+            .requestHandler(router)
+            .listen(8888, http -> {
+                if (http.succeeded()) {
+                    startPromise.complete();
 
-                        CompositeFuture.all(
-                                vertx.deployVerticle(new ProductVerticle(router)),
-                                vertx.deployVerticle(new SalesVerticle(router))
-                        ).onSuccess(event -> {
-                            if (event.succeeded()) {
-                                //deployedVerticles.add(event);
-                            } else {
-                                logger.error("failed to deploy sales verticle : {}", event.cause().getMessage());
-                            }
-                        });
+                    CompositeFuture.all(
+                        vertx.deployVerticle(new ProductVerticle(router)),
+                        vertx.deployVerticle(new SalesVerticle(router))
+                    ).onSuccess(event -> {
+                        if (event.succeeded()) {
+                            deployedVerticles.addAll(event.list());
+                        } else {
+                            logger.error("failed to deploy sales verticle : {}", event.cause().getMessage());
+                        }
+                    });
 
-                        logger.info("HTTP server started on port 8888");
-                    } else {
-                        startPromise.fail(http.cause());
-                    }
-                });
+                    logger.info("HTTP server started on port 8888");
+                } else {
+                    startPromise.fail(http.cause());
+                }
+            });
     }
 
 }
