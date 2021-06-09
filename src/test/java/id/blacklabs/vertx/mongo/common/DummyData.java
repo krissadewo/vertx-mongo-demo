@@ -25,7 +25,7 @@ public class DummyData {
 
     public SalesDto sales() {
         ProductDto product = new ProductDto();
-        product.setId("60bdd3b7e4d1f82e38762dc3");
+        product.setId("60c05371275ef43c6be6e6eb");
         product.setName("Honda City");
         product.setColor("RED");
         product.setQty(2);

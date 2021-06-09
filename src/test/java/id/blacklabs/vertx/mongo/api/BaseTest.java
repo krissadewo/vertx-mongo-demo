@@ -47,7 +47,7 @@ public abstract class BaseTest {
     void setupDatabase(Vertx vertx) {
         MongoConfig mongoConfig = new ConfigContext(vertx).get(MongoConfig.class);
 
-        mongoConfig.getProductCollection().deleteMany(Filters.exists("_id")).subscribe(new SubscriberHelpers.OperationSubscriber<>());
+        //mongoConfig.getProductCollection().deleteMany(Filters.exists("_id")).subscribe(new SubscriberHelpers.OperationSubscriber<>());
         mongoConfig.getSalesCollection().deleteMany(Filters.exists("_id")).subscribe(new SubscriberHelpers.OperationSubscriber<>());
     }
 }

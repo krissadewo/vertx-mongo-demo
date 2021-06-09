@@ -92,16 +92,9 @@ public class ProductRepositoryImpl implements ProductRepository {
 
                 @Override
                 public void onFailure(Throwable throwable) {
-                    logger.error("finding product failed : {}", throwable.getCause().getMessage());
+                    logger.error("finding product failed : {}", throwable.getMessage());
 
                     promise.handle(Future.failedFuture(throwable));
-                }
-
-                @Override
-                public void onComplete() {
-                    if (getObject() == null) {
-                        promise.handle(Future.failedFuture(new MongoClientException(StatusCode.NOT_FOUND)));
-                    }
                 }
             });
     }

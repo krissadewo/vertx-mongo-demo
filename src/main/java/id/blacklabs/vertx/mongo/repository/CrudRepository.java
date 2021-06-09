@@ -1,6 +1,8 @@
 package id.blacklabs.vertx.mongo.repository;
 
 import com.mongodb.MongoTimeoutException;
+import id.blacklabs.vertx.mongo.common.DefaultException;
+import id.blacklabs.vertx.mongo.common.StatusCode;
 import io.vertx.core.Promise;
 import io.vertx.core.shareddata.Shareable;
 import org.reactivestreams.Subscriber;
@@ -33,8 +35,6 @@ public interface CrudRepository<T> extends Shareable {
 
         private List<T> received;
 
-        private T object;
-
         private List<Throwable> errors;
 
         private CountDownLatch latch;
@@ -55,8 +55,6 @@ public interface CrudRepository<T> extends Shareable {
             received.add(t);
 
             onSuccess(t);
-
-            object = t;
         }
 
         public abstract void onSuccess(final T result);
@@ -75,6 +73,10 @@ public interface CrudRepository<T> extends Shareable {
         public void onComplete() {
             completed = true;
             latch.countDown();
+
+            if (getReceived().size() == 0) {
+                onFailure(new DefaultException(StatusCode.NOT_FOUND));
+            }
         }
 
         public Subscription getSubscription() {
@@ -83,10 +85,6 @@ public interface CrudRepository<T> extends Shareable {
 
         public List<T> getReceived() {
             return received;
-        }
-
-        public T getObject() {
-            return object;
         }
 
         public Throwable getError() {
@@ -137,16 +135,9 @@ public interface CrudRepository<T> extends Shareable {
 
         public SingleSubscriber() {
             super.errors = new ArrayList<>();
+            super.received = new ArrayList<>();
+            super.latch = new CountDownLatch(1);
         }
 
-        @Override
-        public void onNext(final T t) {
-            onSuccess(t);
-        }
-
-        @Override
-        public void onComplete() {
-            super.completed = true;
-        }
     }
 }
